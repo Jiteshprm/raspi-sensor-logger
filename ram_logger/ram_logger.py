@@ -30,22 +30,26 @@ def on_connect(mqtt_client, user_data, flags, conn_result):
 
 def check_if_table_exists_in_cache(table_name):
     if table_name in table_name_cache:
+        print ("check_if_table_exists_in_cache - Table_name:" + table_name + " in cache")
         return True
     else:
+        print ("check_if_table_exists_in_cache - Table_name:" + table_name + " NOT in cache")
         return False
 
 
 def check_if_table_exists_in_db(table_name, user_data):
+    print ("check_if_table_exists_in_db - Table_name:" + table_name)
     table_exists_in_db = False
     db_conn = user_data['db_conn']
     sql = """
                         .tables
                         """
     cursor = db_conn.cursor()
+    print ("check_if_table_exists_in_db - Executing: " + sql)
     cursor.execute(sql)
     rows = cursor.fetchall()
     for row in rows:
-        print(row)
+        print("check_if_table_exists_in_db Found Table" + row)
         if table_name == row:
             table_name_cache.add(table_name)
             table_exists_in_db = True
@@ -55,6 +59,7 @@ def check_if_table_exists_in_db(table_name, user_data):
 
 
 def create_table_if_not_exists(table_name, user_data):
+    print ("creating table - table_name:" + table_name)
     db_conn = user_data['db_conn']
     sql = """
     CREATE TABLE IF NOT EXISTS """ + table_name + """ (
@@ -65,6 +70,7 @@ def create_table_if_not_exists(table_name, user_data):
     )
     """
     cursor = db_conn.cursor()
+    print ("creating table - executing: " + sql)
     cursor.execute(sql)
     cursor.close()
 
@@ -76,8 +82,9 @@ def check_if_table_exists_or_else_create(table_name, user_data):
 
 
 def on_message(mqtt_client, user_data, message):
+    print ("received mqtt_client:" + mqtt_client + "user_data: " + user_data + "message: " + message)
     payload = message.payload.decode('utf-8')
-    table_name = message.topic.split("/")(1)
+    table_name = message.topic.split("/")[1]
     print ("table_name:" + table_name)
     check_if_table_exists_or_else_create(table_name, user_data)
     db_conn = user_data['db_conn']
