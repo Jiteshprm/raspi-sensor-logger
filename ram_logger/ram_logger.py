@@ -47,19 +47,16 @@ def check_if_table_exists_in_db(table_name, user_data):
     cursor = db_conn.cursor()
     print ("check_if_table_exists_in_db - Executing: " + sql)
     cursor.execute(sql)
-    rows = cursor.fetchall()
-    for row in rows:
-        print("check_if_table_exists_in_db Found Table" + str(row))
-        if table_name == row:
-            table_name_cache.add(table_name)
-            table_exists_in_db = True
-            break
+    row_count = cursor.rowcount
+    print ("check_if_table_exists_in_db - Found Number of Tables: " + row_count)
+    if row_count > 0:
+        table_exists_in_db = True
     cursor.close()
     return table_exists_in_db
 
 
 def create_table_if_not_exists(table_name, user_data):
-    print ("creating table - table_name:" + table_name)
+    print ("create_table_if_not_exists - table_name:" + table_name)
     db_conn = user_data['db_conn']
     sql = """
     CREATE TABLE IF NOT EXISTS """ + table_name + """ (
@@ -70,7 +67,7 @@ def create_table_if_not_exists(table_name, user_data):
     )
     """
     cursor = db_conn.cursor()
-    print ("creating table - executing: " + sql)
+    print ("create_table_if_not_exists - Executing: " + sql)
     cursor.execute(sql)
     cursor.close()
 
@@ -82,13 +79,14 @@ def check_if_table_exists_or_else_create(table_name, user_data):
 
 
 def on_message(mqtt_client, user_data, message):
-    print ("received mqtt_client:" + str(mqtt_client) + "user_data: " + str(user_data) + "message: " + str(message))
+    print ("on_message - received mqtt_client:" + str(mqtt_client) + "user_data: " + str(user_data) + "message: " + str(message))
     payload = message.payload.decode('utf-8')
     table_name = message.topic.split("/")[1]
-    print ("table_name:" + table_name)
+    print ("on_message - table_name:" + table_name)
     check_if_table_exists_or_else_create(table_name, user_data)
     db_conn = user_data['db_conn']
     sql = 'INSERT INTO ' + table_name + '(timestamp_raw, timestamp_str, value_raw, value_str) VALUES (?, ?, ?, ?)'
+    print ("on_message - Executing: " + sql)
     cursor = db_conn.cursor()
     payload_processed = payload.split(",")
     timestamp_raw = payload_processed[0]
@@ -98,9 +96,11 @@ def on_message(mqtt_client, user_data, message):
     cursor.execute(sql, (timestamp_raw, timestamp_str, value_raw, value_str))
     db_conn.commit()
     cursor.close()
+    print ("on_message - Finished processing message!")
 
 
 def main():
+    print ("main - Starting")
     db_conn = sqlite3.connect(DATABASE_FILE)
 
     mqtt_client = mqtt.Client(MQTT_CLIENT_ID)
@@ -111,6 +111,7 @@ def main():
     mqtt_client.on_message = on_message
 
     mqtt_client.connect(MQTT_HOST, MQTT_PORT)
+    print ("main - Waiting for Messages...")
     mqtt_client.loop_forever()
 
 
