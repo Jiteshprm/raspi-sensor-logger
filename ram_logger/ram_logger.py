@@ -42,7 +42,7 @@ def check_if_table_exists_in_db(table_name, user_data):
     table_exists_in_db = False
     db_conn = user_data['db_conn']
     sql = """
-            SELECT name FROM sqlite_master WHERE type='table' and name=%s;
+            SELECT name FROM sqlite_master WHERE type='table' and name='%s';
                         """ % table_name
     cursor = db_conn.cursor()
     print ("check_if_table_exists_in_db - Executing: " + sql)
