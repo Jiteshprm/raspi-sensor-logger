@@ -106,7 +106,7 @@ def on_message(mqtt_client, user_data, message):
     value_str = payload_processed[2]
     timestamp_msg_raw = timestamp_msg
     timestamp_msg_str = current_milli_time_to_human(timestamp_msg_raw)
-    print_with_msg_timestamp ("on_message - Executing: " + sql + " (%s ,%s ,%s ,%s ,%s ,%s)" % (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
+    print_with_msg_timestamp ("on_message - Executing: " + sql + " (%s, %s, %s, %s, %s, %s)" % (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
     cursor.execute(sql, (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
     db_conn.commit()
     cursor.close()
