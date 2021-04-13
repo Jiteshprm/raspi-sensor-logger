@@ -69,7 +69,7 @@ def create_table_if_not_exists(table_name, user_data):
         timestamp_sensor_raw INTEGER PRIMARY KEY NOT NULL,
         timestamp_sensor_str TEXT NOT NULL,
         timestamp_msg_raw INTEGER NOT NULL,
-        timestamp_msg_str TEXT NOT NULL        
+        timestamp_msg_str TEXT NOT NULL,        
         value_raw INTEGER NOT NULL,
         value_str TEXT NOT NULL
     )
