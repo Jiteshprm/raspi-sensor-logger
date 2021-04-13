@@ -91,10 +91,10 @@ def on_message(mqtt_client, user_data, message):
     sql = 'INSERT INTO ' + table_name + '(timestamp_raw, timestamp_str, value_raw, value_str) VALUES (?, ?, ?, ?)'
     cursor = db_conn.cursor()
     payload_processed = payload.split(",")
-    timestamp_raw = payload_processed(0)
+    timestamp_raw = payload_processed[0]
     timestamp_str = current_milli_time_to_human(timestamp_raw)
-    value_raw = payload_processed(1)
-    value_str = payload_processed(2)
+    value_raw = payload_processed[1]
+    value_str = payload_processed[2]
     cursor.execute(sql, (timestamp_raw, timestamp_str, value_raw, value_str))
     db_conn.commit()
     cursor.close()
