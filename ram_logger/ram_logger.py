@@ -49,7 +49,7 @@ def check_if_table_exists_in_db(table_name, user_data):
     cursor.execute(sql)
     rows = cursor.fetchall()
     for row in rows:
-        print("check_if_table_exists_in_db Found Table" + row)
+        print("check_if_table_exists_in_db Found Table" + str(row))
         if table_name == row:
             table_name_cache.add(table_name)
             table_exists_in_db = True
