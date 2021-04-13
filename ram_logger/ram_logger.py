@@ -89,6 +89,7 @@ def check_if_table_exists_or_else_create(table_name, user_data):
 def on_message(mqtt_client, user_data, message):
     global timestamp_msg
     timestamp_msg = current_milli_time()
+    print_with_msg_timestamp ("-----------------START------------------")
     print_with_msg_timestamp ("on_message - received message: " + str(message.payload) + " topic: " + str(message.topic))
     payload = message.payload.decode('utf-8')
     table_name = message.topic.split("/")[1]
@@ -108,7 +109,9 @@ def on_message(mqtt_client, user_data, message):
     cursor.execute(sql, (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
     db_conn.commit()
     cursor.close()
-    print_with_msg_timestamp ("on_message - Finished processing message, waiting for next message...")
+    print_with_msg_timestamp ("on_message - Finished processing message")
+    print_with_msg_timestamp ("-----------------FINISH------------------")
+    print_with_msg_timestamp ("on_message - Waiting for next message...")
 
 
 def main():
