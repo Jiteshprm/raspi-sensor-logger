@@ -13,7 +13,7 @@ TOPIC = 'sensors/#'
 
 DATABASE_FILE = '/mnt/ramdisk/mqtt_ramdisk.db'
 
-table_name_cache = {}
+table_name_cache = {""}
 
 
 def current_milli_time():
