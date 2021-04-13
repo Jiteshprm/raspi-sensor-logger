@@ -48,7 +48,7 @@ def check_if_table_exists_in_db(table_name, user_data):
     print ("check_if_table_exists_in_db - Executing: " + sql)
     cursor.execute(sql)
     row_count = cursor.rowcount
-    print ("check_if_table_exists_in_db - Found Number of Tables: " + row_count)
+    print ("check_if_table_exists_in_db - Found Number of Tables: " + str(row_count))
     if row_count > 0:
         table_exists_in_db = True
     cursor.close()
