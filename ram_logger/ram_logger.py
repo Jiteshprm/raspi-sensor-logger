@@ -26,7 +26,7 @@ def current_milli_time_to_human(millisecs_since_epoch):
 
 
 def print_with_msg_timestamp(msg):
-    print (current_milli_time_to_human(timestamp_msg) + msg)
+    print ("[" + current_milli_time_to_human(timestamp_msg) + "]: " + msg)
 
 
 def on_connect(mqtt_client, user_data, flags, conn_result):
@@ -98,7 +98,7 @@ def on_message(mqtt_client, user_data, message):
     cursor = db_conn.cursor()
     payload_processed = payload.split(",")
     timestamp_sensor_raw = payload_processed[0]
-    timestamp_sensor_str = current_milli_time_to_human(timestamp_raw)
+    timestamp_sensor_str = current_milli_time_to_human(timestamp_sensor_raw)
     value_raw = payload_processed[1]
     value_str = payload_processed[2]
     timestamp_msg_raw = current_milli_time
