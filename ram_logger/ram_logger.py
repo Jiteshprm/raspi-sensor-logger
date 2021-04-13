@@ -87,7 +87,8 @@ def check_if_table_exists_or_else_create(table_name, user_data):
 
 
 def on_message(mqtt_client, user_data, message):
-    global timestamp_msg = current_milli_time()
+    global timestamp_msg
+    timestamp_msg = current_milli_time()
     print_with_msg_timestamp ("on_message - received message: " + str(message.payload) + " topic: " + str(message.topic))
     payload = message.payload.decode('utf-8')
     table_name = message.topic.split("/")[1]
