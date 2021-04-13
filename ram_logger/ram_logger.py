@@ -50,6 +50,7 @@ def check_if_table_exists_in_db(table_name, user_data):
     row_count = len(cursor.fetchall())
     print ("check_if_table_exists_in_db - Found Number of Tables: " + str(row_count))
     if row_count > 0:
+        table_name_cache.add(table_name)
         table_exists_in_db = True
     cursor.close()
     return table_exists_in_db
