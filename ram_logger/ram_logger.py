@@ -78,6 +78,7 @@ def create_table_if_not_exists(table_name, user_data):
     print_with_msg_timestamp ("create_table_if_not_exists - Executing: " + sql)
     cursor.execute(sql)
     cursor.close()
+    table_name_cache.add(table_name)
 
 
 def check_if_table_exists_or_else_create(table_name, user_data):
