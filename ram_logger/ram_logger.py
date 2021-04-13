@@ -31,7 +31,7 @@ def on_connect(mqtt_client, user_data, flags, conn_result):
 def check_if_table_exists_in_cache(table_name):
     if table_name in table_name_cache:
         return True
-    else
+    else:
         return False
 
 
@@ -70,8 +70,8 @@ def create_table_if_not_exists(table_name, user_data):
 
 
 def check_if_table_exists_or_else_create(table_name, user_data):
-    if not check_if_table_exists_in_cache(table_name)
-        if not check_if_table_exists_in_db(table_name, user_data)
+    if not check_if_table_exists_in_cache(table_name):
+        if not check_if_table_exists_in_db(table_name, user_data):
             create_table_if_not_exists(table_name, user_data)
 
 
