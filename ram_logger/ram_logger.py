@@ -82,7 +82,7 @@ def check_if_table_exists_or_else_create(table_name, user_data):
 
 
 def on_message(mqtt_client, user_data, message):
-    print ("received mqtt_client:" + mqtt_client + "user_data: " + user_data + "message: " + message)
+    print ("received mqtt_client:" + str(mqtt_client) + "user_data: " + str(user_data) + "message: " + str(message))
     payload = message.payload.decode('utf-8')
     table_name = message.topic.split("/")[1]
     print ("table_name:" + table_name)
