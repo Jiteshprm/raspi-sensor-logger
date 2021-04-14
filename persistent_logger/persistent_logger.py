@@ -68,6 +68,9 @@ def get_all_tables_from_ramdisk(db_conn):
 def main():
     print ("main - Starting")
     print_with_msg_timestamp ("-----------------START------------------")
+    print_with_msg_timestamp ("RamDisk DB Path:" + DATABASE_FILE)
+    print_with_msg_timestamp ("Persistnt DB Path:" + DATABASE_FILE_PERSISTENT)
+
     db_conn = sqlite3.connect(DATABASE_FILE_PERSISTENT)
     attach_ramdisk_db(db_conn)
 
