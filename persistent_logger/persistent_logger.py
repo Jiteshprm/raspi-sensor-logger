@@ -65,7 +65,7 @@ def get_all_tables_from_ramdisk(db_conn):
     return alltables
 
 
-def check_if_table_exists_in_db(table_name, db_conn):
+def check_if_table_exists_in_db(db_conn, table_name):
     print_with_msg_timestamp ("check_if_table_exists_in_db - Table_name:" + table_name)
     table_exists_in_db = False
     sql = """
