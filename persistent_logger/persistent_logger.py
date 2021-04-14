@@ -96,7 +96,7 @@ def main():
     for t in alltables:
         t_name = t[0]
         print_with_msg_timestamp("main - Copying table: " + t_name)
-        if check_if_table_exists_in_db(db_conn, t_name):
+        if not check_if_table_exists_in_db(db_conn, t_name):
             create_table_in_persistent_db_if_not_exists(db_conn, t_name)
         copy_ramdisk_to_persistent_db(db_conn, t_name)
         db_conn.commit()
