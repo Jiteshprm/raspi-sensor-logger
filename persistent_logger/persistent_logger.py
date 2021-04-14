@@ -65,6 +65,23 @@ def get_all_tables_from_ramdisk(db_conn):
     return alltables
 
 
+def check_if_table_exists_in_db(table_name, db_conn):
+    print_with_msg_timestamp ("check_if_table_exists_in_db - Table_name:" + table_name)
+    table_exists_in_db = False
+    sql = """
+            SELECT name FROM sqlite_master WHERE type='table' and name='%s';
+                        """ % table_name
+    cursor = db_conn.cursor()
+    print_with_msg_timestamp ("check_if_table_exists_in_db - Executing: " + sql)
+    cursor.execute(sql)
+    row_count = len(cursor.fetchall())
+    print_with_msg_timestamp ("check_if_table_exists_in_db - Found Number of Tables: " + str(row_count))
+    if row_count > 0:
+        table_exists_in_db = True
+    cursor.close()
+    return table_exists_in_db
+
+
 def main():
     print ("main - Starting")
     print_with_msg_timestamp ("-----------------START------------------")
@@ -79,7 +96,8 @@ def main():
     for t in alltables:
         t_name = t[0]
         print_with_msg_timestamp("main - Copying table: " + t_name)
-        create_table_in_persistent_db_if_not_exists(db_conn, t_name)
+        if check_if_table_exists_in_db(db_conn, t_name):
+            create_table_in_persistent_db_if_not_exists(db_conn, t_name)
         copy_ramdisk_to_persistent_db(db_conn, t_name)
         db_conn.commit()
     print_with_msg_timestamp ("-----------------FINISH------------------")
