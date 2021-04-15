@@ -57,4 +57,4 @@ while True:
     print(time.strftime('%c %Z') + ',' + str(temp_c))
     ret = mqtt_client.publish("sensors/ds18s20_temp","%s,%s,%s" % (current_milli_time(), lines, temp_c))
     print("Publish ds18s20_temp Returned: " + str(ret))
-    time.sleep(30)
+    time.sleep(15)

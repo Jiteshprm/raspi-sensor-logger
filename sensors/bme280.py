@@ -194,6 +194,7 @@ def main():
     print("Publish bme280_pres Returned: " + str(ret))
     ret = mqtt_client.publish("sensors/bme280_hum","%s,%s,%s" % (current_milli_time(), hum_raw, humidity))
     print("Publish bme280_hum Returned: " + str(ret))
+    time.sleep(15)
 
 if __name__=="__main__":
    main()

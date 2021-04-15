@@ -86,7 +86,7 @@ def main():
     print(time.strftime('%c %Z') + ',' + format(lightLevel,'.2f'))
     ret = mqtt_client.publish("sensors/bh1750_lux","%s,%s,%s" % (current_milli_time(), data, lightLevel))
     print("Publish Returned: " + str(ret))
-    time.sleep(30)
+    time.sleep(15)
 
 if __name__=="__main__":
    main()
