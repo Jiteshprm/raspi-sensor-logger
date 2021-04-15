@@ -84,7 +84,7 @@ def main():
     lightLevel, data = readLight()
     #print("Light Level : " + format(lightLevel,'.2f') + " lx")
     print(time.strftime('%c %Z') + ' - BH1750 Light:' + format(lightLevel,'.2f') + " lux")
-    ret = mqtt_client.publish("sensors/bh1750_lux","%s,%s,%s" % (current_milli_time(), data, lightLevel))
+    ret = mqtt_client.publish("sensors/bh1750_lux","%s|%s|%s" % (current_milli_time(), data, lightLevel))
     # print("Publish Returned: " + str(ret))
     time.sleep(15)
 

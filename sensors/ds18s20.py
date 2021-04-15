@@ -54,7 +54,7 @@ mqtt_client.connect(MQTT_HOST, MQTT_PORT)
 
 while True:
     temp_c, lines = read_temp()
-    ret = mqtt_client.publish("sensors/ds18s20_temp","%s,%s,%s" % (current_milli_time(), lines, str(temp_c)))
+    ret = mqtt_client.publish("sensors/ds18s20_temp","%s|%s|%s" % (current_milli_time(), lines, str(temp_c)))
     print(time.strftime('%c %Z') + ' - DS18S20 Temperature : ', str(temp_c))
     #print("Publish ds18s20_temp Returned: " + str(ret))
     time.sleep(15)

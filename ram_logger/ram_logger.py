@@ -100,7 +100,7 @@ def on_message(mqtt_client, user_data, message):
     db_conn = user_data['db_conn']
     sql = 'INSERT INTO ' + table_name + '(timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str) VALUES (?, ?, ?, ?, ?, ?)'
     cursor = db_conn.cursor()
-    payload_processed = payload.split(",")
+    payload_processed = payload.split("|")
     timestamp_sensor_raw = payload_processed[0]
     timestamp_sensor_str = current_milli_time_to_human(timestamp_sensor_raw)
     value_raw = payload_processed[1]
