@@ -18,7 +18,7 @@ def current_milli_time():
 
 
 def on_publish(client,userdata,result):             #create function for callback
-    print("data published ", result)
+    #print("data published ", result)
     pass
 
 
@@ -43,7 +43,7 @@ def read_temp():
     if equals_pos != -1:
         temp_string = lines[1][equals_pos+2:]
         temp_c = float(temp_string) / 1000.0
-        return str(temp_c), lines
+        return temp_c, lines
 
 
 mqtt_client = mqtt.Client(MQTT_CLIENT_ID)
@@ -54,7 +54,7 @@ mqtt_client.connect(MQTT_HOST, MQTT_PORT)
 
 while True:
     temp_c, lines = read_temp()
-    print(time.strftime('%c %Z') + ',' + str(temp_c))
-    ret = mqtt_client.publish("sensors/ds18s20_temp","%s,%s,%s" % (current_milli_time(), lines, temp_c))
-    print("Publish ds18s20_temp Returned: " + str(ret))
+    ret = mqtt_client.publish("sensors/ds18s20_temp","%s,%s,%s" % (current_milli_time(), lines, str(temp_c)))
+    print(time.strftime('%c %Z') + ' - DS18S20 Temperature : ', str(temp_c))
+    #print("Publish ds18s20_temp Returned: " + str(ret))
     time.sleep(15)

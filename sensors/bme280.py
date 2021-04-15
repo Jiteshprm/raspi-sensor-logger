@@ -41,7 +41,7 @@ def current_milli_time():
 
 
 def on_publish(client,userdata,result):             #create function for callback
-  print("data published ", result)
+  #print("data published ", result)
   pass
 
 
@@ -185,15 +185,16 @@ def main():
   while True:
     temperature,pressure,humidity,temp_raw,pres_raw,hum_raw = readBME280All()
 
-    print ("Temperature : ", temperature, "C")
-    print ("Pressure : ", pressure, "hPa")
-    print ("Humidity : ", humidity, "%")
+    # print ("Temperature : ", temperature, "C")
+    # print ("Pressure : ", pressure, "hPa")
+    # print ("Humidity : ", humidity, "%")
     ret = mqtt_client.publish("sensors/bme280_temp","%s,%s,%s" % (current_milli_time(), temp_raw, temperature))
-    print("Publish bme280_temp Returned: " + str(ret))
+    # print("Publish bme280_temp Returned: " + str(ret))
     ret = mqtt_client.publish("sensors/bme280_pres","%s,%s,%s" % (current_milli_time(), pres_raw, pressure))
-    print("Publish bme280_pres Returned: " + str(ret))
+    # print("Publish bme280_pres Returned: " + str(ret))
     ret = mqtt_client.publish("sensors/bme280_hum","%s,%s,%s" % (current_milli_time(), hum_raw, humidity))
-    print("Publish bme280_hum Returned: " + str(ret))
+    # print("Publish bme280_hum Returned: " + str(ret))
+    print(time.strftime('%c %Z') + ' - BME280 Temperature : ', temperature, "C - ", "Pressure : ", pressure, "hPa - ","Humidity : ", humidity, "%")
     time.sleep(15)
 
 if __name__=="__main__":

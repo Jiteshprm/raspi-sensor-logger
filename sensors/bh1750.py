@@ -57,7 +57,7 @@ def current_milli_time():
 
 
 def on_publish(client,userdata,result):             #create function for callback
-  print("data published ", result)
+  #print("data published ", result)
   pass
 
 
@@ -83,9 +83,9 @@ def main():
   while True:
     lightLevel, data = readLight()
     #print("Light Level : " + format(lightLevel,'.2f') + " lx")
-    print(time.strftime('%c %Z') + ',' + format(lightLevel,'.2f'))
+    print(time.strftime('%c %Z') + ' - BH1750 Light:' + format(lightLevel,'.2f') + " lux")
     ret = mqtt_client.publish("sensors/bh1750_lux","%s,%s,%s" % (current_milli_time(), data, lightLevel))
-    print("Publish Returned: " + str(ret))
+    # print("Publish Returned: " + str(ret))
     time.sleep(15)
 
 if __name__=="__main__":
