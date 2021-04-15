@@ -1,0 +1,24 @@
+#Guide:
+#https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#https://dzone.com/articles/run-your-java-application-as-a-service-on-ubuntu
+
+[Unit]
+Description=BH1750 Sensor Service
+[Service]
+User=birdofprey
+# The configuration file application.properties should be here:
+
+#change this to your workspace
+WorkingDirectory=/opt/raspi-sensor-logger/sensors
+
+#path to executable.
+#executable is a bash script which calls jar file
+ExecStart=/opt/raspi-sensor-logger/sensors/bh1750.py
+
+SuccessExitStatus=0
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
