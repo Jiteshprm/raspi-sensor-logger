@@ -179,15 +179,15 @@ def main():
   mqtt_client.connect(MQTT_HOST, MQTT_PORT)
 
   (chip_id, chip_version) = readBME280ID()
-  print "Chip ID     :", chip_id
-  print "Version     :", chip_version
+  print ("Chip ID     :", chip_id)
+  print ("Version     :", chip_version)
 
   while True:
     temperature,pressure,humidity,temp_raw,pres_raw,hum_raw = readBME280All()
 
-    print "Temperature : ", temperature, "C"
-    print "Pressure : ", pressure, "hPa"
-    print "Humidity : ", humidity, "%"
+    print ("Temperature : ", temperature, "C")
+    print ("Pressure : ", pressure, "hPa")
+    print ("Humidity : ", humidity, "%")
     ret = mqtt_client.publish("sensors/bme280_temp","%s,%s,%s" % (current_milli_time(), temp_raw, temperature))
     print("Publish bme280_temp Returned: " + str(ret))
     ret = mqtt_client.publish("sensors/bme280_pres","%s,%s,%s" % (current_milli_time(), pres_raw, pressure))
