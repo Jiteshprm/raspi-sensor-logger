@@ -3,7 +3,7 @@
 #https://dzone.com/articles/run-your-java-application-as-a-service-on-ubuntu
 
 [Unit]
-Description=BH1750 Sensor Service
+Description=Persistent Logger Service
 [Service]
 User=birdofprey
 # The configuration file application.properties should be here:

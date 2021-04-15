@@ -1,5 +1,6 @@
 #/bin/bash
 #Must be run as sudo
+echo $EUID
 if [ "$EUID" -ne 0 ]
   then echo "Please run with sudo!"
   exit
@@ -7,8 +8,13 @@ fi
 
 set -x
 cp -r ../raspi-sensor-logger /opt
+rm -rf /opt/raspi-sensor-logger/.git
 find /opt/raspi-sensor-logger/ -type f -iname "*.sh" -exec chmod u+x {} \;
 find /opt/raspi-sensor-logger/ -type f -iname "*.py" -exec chmod u+x {} \;
+
+mkdir /mnt/ramdisk
+mount -osize=10m tmpfs /mnt/ramdisk -t tmpfs
+chmod 777 /mnt/ramdisk
 
 cp /opt/raspi-sensor-logger/services/* /etc/systemd/system
 systemctl daemon-reload

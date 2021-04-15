@@ -3,7 +3,7 @@
 #https://dzone.com/articles/run-your-java-application-as-a-service-on-ubuntu
 
 [Unit]
-Description=BH1750 Sensor Service
+Description=Ram Logger Service
 [Service]
 User=birdofprey
 # The configuration file application.properties should be here:
@@ -13,7 +13,7 @@ WorkingDirectory=/opt/raspi-sensor-logger/ram_logger
 
 #path to executable.
 #executable is a bash script which calls jar file
-ExecStart=/opt/raspi-sensor-logger/ram_logger/ram_logger_start.py
+ExecStart=/opt/raspi-sensor-logger/ram_logger/ram_logger.py
 
 SuccessExitStatus=0
 TimeoutStopSec=10
