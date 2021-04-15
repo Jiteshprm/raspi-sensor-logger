@@ -18,7 +18,7 @@ def current_milli_time():
 
 
 def on_publish(client,userdata,result):             #create function for callback
-    print("data published \n")
+    print("data published ", result)
     pass
 
 
