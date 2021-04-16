@@ -103,4 +103,7 @@ def main():
         db_conn.commit()
     print_with_msg_timestamp ("-----------------FINISH------------------")
 
-main()
+
+while True:
+    main()
+    time.sleep(7200)
