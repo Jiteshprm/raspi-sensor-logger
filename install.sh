@@ -25,11 +25,13 @@ cp /opt/raspi-sensor-logger/services/* /etc/systemd/system
 systemctl daemon-reload
 systemctl enable ram_logger.service
 systemctl start ram_logger.service
-
+sleep 1s
 systemctl enable bh1750.service
 systemctl start bh1750.service
+sleep 5s
 systemctl enable bme280.service
 systemctl start bme280.service
+sleep 5s
 systemctl enable ds18s20.service
 systemctl start ds18s20.service
 systemctl enable persistent_logger.service
