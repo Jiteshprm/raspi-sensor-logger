@@ -6,7 +6,7 @@
 
    
     sqlite3 /mnt/ramdisk/mqtt_ramdisk.db
-
+    sqlite3 /home/birdofprey/sensor_data.db
     birdofprey@birdofprey-rasp-desktop:~/raspi-sensor-logger$ sqlite3 /mnt/ramdisk/mqtt_ramdisk.db
     SQLite version 3.11.0 2016-02-15 17:29:24
     Enter ".help" for usage hints.

@@ -12,9 +12,14 @@ rm -rf /opt/raspi-sensor-logger/.git
 find /opt/raspi-sensor-logger/ -type f -iname "*.sh" -exec chmod u+x {} \;
 find /opt/raspi-sensor-logger/ -type f -iname "*.py" -exec chmod u+x {} \;
 
-mkdir /mnt/ramdisk
-mount -osize=10m tmpfs /mnt/ramdisk -t tmpfs
-chmod 777 /mnt/ramdisk
+if [ -d "/mnt/ramdisk" ]
+then
+    echo "Directory /mnt/ramdisk exists."
+else
+    mkdir /mnt/ramdisk
+    mount -osize=10m tmpfs /mnt/ramdisk -t tmpfs
+    chmod 777 /mnt/ramdisk
+fi
 
 cp /opt/raspi-sensor-logger/services/* /etc/systemd/system
 systemctl daemon-reload
