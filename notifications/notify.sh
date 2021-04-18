@@ -6,4 +6,11 @@ fi
 # I have sendmail installed on my Pi - use the appropriate syntax if you use a different mail handler
 # The <<EOF....EOF sequence directs everything from the line below that on which the <<EOF appears to the
 # second EOF to sendmail, creating an email message. I have the root address aliased to my regular email.
-echo "Subject: Notification Email for $1 service \n # Include the reporting service's status\n $(systemctl status -l -n 50 "$1")" | msmtp birdofp@gmail.com
+cat <<EOF | msmtp birdofp@gmail.com
+To: birdofp
+From: raspberry
+Subject: Raspberry - $1 service restarted!
+
+# Include the reporting service's status
+$(systemctl status -l -n 50 "$1")
+EOF
