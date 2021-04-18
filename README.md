@@ -19,6 +19,31 @@
     select * from bme280_temp;
     select * from ds18s20_temp;
     
+    delete from bh1750_lux where timestamp_sensor_raw<1618617597302;
+    delete from bme280_hum where timestamp_sensor_raw<1618617597302;
+    delete from bme280_pres where timestamp_sensor_raw<1618617597302;
+    delete from bme280_temp where timestamp_sensor_raw<1618617597302;
+    delete from ds18s20_temp where timestamp_sensor_raw<1618617597302;
+    
+    
+    
+    Enable auto vacuum:
+    https://www.sqlite.org/pragma.html#pragma_auto_vacuum
+    https://stackoverflow.com/questions/60409960/peewee-sqlite-auto-vacuum
+    birdofprey@birdofprey-rasp-desktop:~/raspi-sensor-logger$ sqlite3 /mnt/ramdisk/mqtt_ramdisk.db
+    SQLite version 3.11.0 2016-02-15 17:29:24
+    Enter ".help" for usage hints.
+    sqlite> PRAGMA auto_vacuum;
+    0
+    sqlite> PRAGMA auto_vacuum = 1;
+    sqlite> PRAGMA auto_vacuum;
+    0
+    sqlite> PRAGMA auto_vacuum = 1;
+    sqlite> VACUUM;
+    sqlite> PRAGMA auto_vacuum = 1;
+    sqlite> PRAGMA auto_vacuum;
+    1
+
     
     
     sudo sh /opt/raspi-sensor-logger/stop_all_loggers.sh 
