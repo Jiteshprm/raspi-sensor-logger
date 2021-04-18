@@ -13,12 +13,15 @@ WorkingDirectory=/opt/raspi-sensor-logger/persistent_logger
 
 #path to executable.
 #executable is a bash script which calls jar file
-ExecStart=/opt/raspi-sensor-logger/persistent_logger/persistent_logger.py
+ExecStart=/opt/raspi-sensor-logger/persistent_logger/persistent_logger1.py
 
 SuccessExitStatus=0
 TimeoutStopSec=10
 Restart=on-failure
 RestartSec=5
+# the next line uses your shell script to send an email message if the service fails
+# the name of the service is passed as the first and only parameter
+OnFailure=notify@%n.service
 
 [Install]
 WantedBy=multi-user.target

@@ -1,0 +1,8 @@
+# %i is templated out to whatever is put after the
+# @ when this is called from another systemd unit.
+[Unit]
+Description=Notification email for %i
+
+[Service]
+Type=oneshot
+ExecStart=/opt/raspi-sensor-logger/notifications/notify.sh %i
