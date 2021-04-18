@@ -38,13 +38,14 @@ def print_with_msg_timestamp(msg):
 def cleanup_timer(db_conn):
     print_with_msg_timestamp("cleanup_timer - Started")
     for table in table_name_cache:
-        timestamp_to_delete = datetime.today() - timedelta(days=1)
-        timestamp_to_delete_from_epoch = round(timestamp_to_delete.timestamp()*1000)
-        print_with_msg_timestamp("cleanup_timer - Found table to cleanup: " + table + " - TimeStamp to cutoff from: " + str(timestamp_to_delete.strftime('%Y-%m-%d %H:%M:%S.%f')) + " Timestamp from epoch: " + str(timestamp_to_delete_from_epoch))
-        sql = 'DELETE FROM ' + table + ' WHERE timestamp_sensor_raw<' + str(timestamp_to_delete_from_epoch)
-        cursor = db_conn.cursor()
-        print_with_msg_timestamp ("cleanup_timer - Executing Cleanup: " + sql)
-        cursor.execute(sql)
+        if len(table) > 0:
+            timestamp_to_delete = datetime.today() - timedelta(days=1)
+            timestamp_to_delete_from_epoch = round(timestamp_to_delete.timestamp()*1000)
+            print_with_msg_timestamp("cleanup_timer - Found table to cleanup: " + table + " - TimeStamp to cutoff from: " + str(timestamp_to_delete.strftime('%Y-%m-%d %H:%M:%S.%f')) + " Timestamp from epoch: " + str(timestamp_to_delete_from_epoch))
+            sql = 'DELETE FROM ' + table + ' WHERE timestamp_sensor_raw<' + str(timestamp_to_delete_from_epoch)
+            cursor = db_conn.cursor()
+            print_with_msg_timestamp ("cleanup_timer - Executing Cleanup: " + sql)
+            cursor.execute(sql)
     global next_call
     print_with_msg_timestamp("cleanup_timer - Finished")
     next_call = next_call+86400 #1 day
