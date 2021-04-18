@@ -17,7 +17,7 @@ WorkingDirectory=/opt/raspi-sensor-logger/persistent_logger
 
 #path to executable.
 #executable is a bash script which calls jar file
-ExecStart=/opt/raspi-sensor-logger/persistent_logger/persistent_logger1.py
+ExecStart=/opt/raspi-sensor-logger/persistent_logger/persistent_logger.py
 
 SuccessExitStatus=0
 TimeoutStopSec=10
