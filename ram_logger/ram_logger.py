@@ -18,6 +18,7 @@ DATABASE_FILE = '/mnt/ramdisk/mqtt_ramdisk.db'
 table_name_cache = {""}
 timestamp_msg = 0
 next_call = time.time()
+time_to_cleanup = False
 
 
 def current_milli_time():
@@ -36,21 +37,31 @@ def print_with_msg_timestamp(msg):
 #https://stackoverflow.com/questions/8600161/executing-periodic-actions
 #https://stackoverflow.com/questions/46402022/subtract-hours-and-minutes-from-time
 #https://stackoverflow.com/questions/11743019/convert-python-datetime-to-epoch-with-strftime
-def cleanup_timer(db_conn):
-    print_with_msg_timestamp("cleanup_timer - Started")
+def cleanup_timer():
+    print_with_msg_timestamp("========cleanup_timer - Started==========")
+    global time_to_cleanup
+    time_to_cleanup = True
+    global next_call
+    next_call = next_call+86400/4 #1 day
+    print_with_msg_timestamp("cleanup_timer - Next call @ " + current_milli_time_to_human(next_call * 1000))
+    threading.Timer(next_call - time.time(), cleanup_timer).start()
+    print_with_msg_timestamp("========cleanup_timer - Finished========")
+
+
+def execute_cleanup (db_conn):
+    print_with_msg_timestamp("+++++++++++execute_cleanup - Started+++++++++++")
+    global time_to_cleanup
+    time_to_cleanup = False
     for table in table_name_cache:
         if len(table) > 0:
             timestamp_to_delete = datetime.today() - timedelta(days=1)
             timestamp_to_delete_from_epoch = round(timestamp_to_delete.timestamp()*1000)
             print_with_msg_timestamp("cleanup_timer - Found table to cleanup: " + table + " - TimeStamp to cutoff from: " + str(timestamp_to_delete.strftime('%Y-%m-%d %H:%M:%S.%f')) + " Timestamp from epoch: " + str(timestamp_to_delete_from_epoch))
             sql = 'DELETE FROM ' + table + ' WHERE timestamp_sensor_raw<' + str(timestamp_to_delete_from_epoch)
-            cursor = db_conn.cursor()
             print_with_msg_timestamp ("cleanup_timer - Executing Cleanup: " + sql)
+            cursor = db_conn.cursor()
             cursor.execute(sql)
-    global next_call
-    print_with_msg_timestamp("cleanup_timer - Finished")
-    next_call = next_call+86400 #1 day
-    threading.Timer(next_call - time.time(), cleanup_timer, [db_conn]).start()
+    print_with_msg_timestamp("+++++++++++execute_cleanup - Finished+++++++++++")
 
 
 def on_connect(mqtt_client, user_data, flags, conn_result):
@@ -144,6 +155,9 @@ def on_message(mqtt_client, user_data, message):
     cursor.close()
     print_with_msg_timestamp ("on_message - Finished processing message")
     print_with_msg_timestamp ("-----------------FINISH------------------")
+    global time_to_cleanup
+    if time_to_cleanup:
+        execute_cleanup(db_conn)
     print_with_msg_timestamp ("on_message - Waiting for next message...")
 
 
@@ -159,7 +173,7 @@ def main():
     mqtt_client.on_message = on_message
 
     mqtt_client.connect(MQTT_HOST, MQTT_PORT)
-    cleanup_timer(db_conn)
+    cleanup_timer()
 
     print ("main - Waiting for Messages...")
     mqtt_client.loop_forever()

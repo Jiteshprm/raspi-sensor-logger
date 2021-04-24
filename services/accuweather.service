@@ -1,0 +1,28 @@
+#Guide:
+#https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#https://dzone.com/articles/run-your-java-application-as-a-service-on-ubuntu
+
+[Unit]
+Description=Accuweather Service
+# the next line uses your shell script to send an email message if the service fails
+# the name of the service is passed as the first and only parameter
+OnFailure=notify@%n.service
+
+[Service]
+User=birdofprey
+# The configuration file application.properties should be here:
+
+#change this to your workspace
+WorkingDirectory=/opt/raspi-sensor-logger/accuweather
+
+#path to executable.
+#executable is a bash script which calls jar file
+ExecStart=/opt/raspi-sensor-logger/accuweather/accuweather.py
+
+SuccessExitStatus=0
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

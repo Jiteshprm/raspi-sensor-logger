@@ -35,6 +35,8 @@ DEVICE = 0x76 # Default device I2C address
 bus = smbus.SMBus(1) # Rev 2 Pi, Pi 2 & Pi 3 uses bus 1
                      # Rev 1 Pi uses bus 0
 
+flag_connected = 0
+
 
 def current_milli_time():
   return round(time.time() * 1000)
@@ -44,6 +46,16 @@ def on_publish(client,userdata,result):             #create function for callbac
   #print("data published ", result)
   pass
 
+def on_connect(client, userdata, flags, rc):
+  global flag_connected
+  flag_connected = 1
+
+
+def on_disconnect(client, userdata, rc):
+  global flag_connected
+  flag_connected = 0
+  if rc != 0:
+    print "Unexpected MQTT disconnection. Will auto-reconnect"
 
 def getShort(data, index):
   # return two bytes from data as a signed 16-bit value
@@ -174,15 +186,18 @@ def readBME280All(addr=DEVICE):
 def main():
   mqtt_client = mqtt.Client(MQTT_CLIENT_ID)
 
+  mqtt_client.on_connect = on_connect
   mqtt_client.on_publish = on_publish
-
-  mqtt_client.connect(MQTT_HOST, MQTT_PORT)
+  mqtt_client.on_disconnect = on_disconnect
 
   (chip_id, chip_version) = readBME280ID()
   print ("Chip ID     :", chip_id)
   print ("Version     :", chip_version)
 
   while True:
+    if flag_connected == 0:
+      mqtt_client.connect(MQTT_HOST, MQTT_PORT)
+
     temperature,pressure,humidity,temp_raw,pres_raw,hum_raw = readBME280All()
 
     # print ("Temperature : ", temperature, "C")

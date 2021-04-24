@@ -20,13 +20,28 @@
     select * from bme280_pres;
     select * from bme280_temp;
     select * from ds18s20_temp;
+    select * from accuweather_upper_holloway;
     
-    delete from bh1750_lux where timestamp_sensor_raw<1618617597302;
-    delete from bme280_hum where timestamp_sensor_raw<1618617597302;
-    delete from bme280_pres where timestamp_sensor_raw<1618617597302;
-    delete from bme280_temp where timestamp_sensor_raw<1618617597302;
-    delete from ds18s20_temp where timestamp_sensor_raw<1618617597302;
+    select * from outdoor_bh1750_lux;
+    select * from outdoor_bme280_alt;
+    select * from outdoor_bme280_hum;
+    select * from outdoor_bme280_pres;
+    select * from outdoor_bme280_temp;
+    select * from outdoor_sht31d_hum;
+    select * from outdoor_sht31d_temp;
     
+    delete from bh1750_lux where timestamp_sensor_raw<1619046010000;
+    delete from bme280_hum where timestamp_sensor_raw<1619046010000;
+    delete from bme280_pres where timestamp_sensor_raw<1619046010000;
+    delete from bme280_temp where timestamp_sensor_raw<1619046010000;
+    delete from ds18s20_temp where timestamp_sensor_raw<1619046010000;
+        delete from outdoor_bh1750_lux where timestamp_sensor_raw<1619046010000;
+        delete from outdoor_bme280_alt where timestamp_sensor_raw<1619046010000;
+        delete from outdoor_bme280_hum where timestamp_sensor_raw<1619046010000;
+        delete from outdoor_bme280_pres where timestamp_sensor_raw<1619046010000;
+        delete from outdoor_bme280_temp where timestamp_sensor_raw<1619046010000;
+        delete from outdoor_sht31d_hum where timestamp_sensor_raw<1619046010000;
+        delete from outdoor_sht31d_temp where timestamp_sensor_raw<1619046010000;
     
     
     Enable auto vacuum:
@@ -61,4 +76,13 @@
     sudo journalctl -f -u bh1750 
     sudo journalctl -f -u persistent_logger 
     sudo journalctl -f -u ram_logger 
+    sudo journalctl -f -u accuweather 
     
+    sudo sh /opt/raspi-sensor-logger/stop_all_loggers.sh
+    cp /mnt/ramdisk/mqtt_ramdisk.db /home/birdofprey    
+    sudo umount /mnt/ramdisk    
+    sudo mount -osize=30m tmpfs /mnt/ramdisk -t tmpfs
+    chmod 777 /mnt/ramdisk
+    cp /home/birdofprey/mqtt_ramdisk.db /mnt/ramdisk
+    
+    screen /dev/cu.usbserial 115200

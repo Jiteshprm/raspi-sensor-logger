@@ -51,6 +51,8 @@ ONE_TIME_LOW_RES_MODE = 0x23
 #bus = smbus.SMBus(0) # Rev 1 Pi uses 0
 bus = smbus.SMBus(1)  # Rev 2 Pi uses 1
 
+flag_connected = 0
+
 
 def current_milli_time():
   return round(time.time() * 1000)
@@ -61,6 +63,18 @@ def on_publish(client,userdata,result):             #create function for callbac
   pass
 
 
+def on_connect(client, userdata, flags, rc):
+  global flag_connected
+  flag_connected = 1
+
+
+def on_disconnect(client, userdata, rc):
+  global flag_connected
+  flag_connected = 0
+  if rc != 0:
+    print "Unexpected MQTT disconnection. Will auto-reconnect"
+
+
 def convertToNumber(data):
   # Simple function to convert 2 bytes of data
   # into a decimal number. Optional parameter 'decimals'
@@ -68,25 +82,30 @@ def convertToNumber(data):
   result=(data[1] + (256 * data[0])) / 1.2
   return (result)
 
+
 def readLight(addr=DEVICE):
   # Read data from I2C interface
   data = bus.read_i2c_block_data(addr,ONE_TIME_HIGH_RES_MODE_1)
   return convertToNumber(data), data
 
+
 def main():
-  mqtt_client = mqtt.Client(MQTT_CLIENT_ID)
+    mqtt_client = mqtt.Client(MQTT_CLIENT_ID)
 
-  mqtt_client.on_publish = on_publish
+    mqtt_client.on_connect = on_connect
+    mqtt_client.on_publish = on_publish
+    mqtt_client.on_disconnect = on_disconnect
 
-  mqtt_client.connect(MQTT_HOST, MQTT_PORT)
+    while True:
+        if flag_connected == 0:
+            mqtt_client.connect(MQTT_HOST, MQTT_PORT)
+        lightLevel, data = readLight()
+        #print("Light Level : " + format(lightLevel,'.2f') + " lx")
+        print(time.strftime('%c %Z') + ' - BH1750 Light:' + format(lightLevel,'.2f') + " lux")
+        ret = mqtt_client.publish("sensors/bh1750_lux","%s|%s|%s" % (current_milli_time(), data, lightLevel))
+        # print("Publish Returned: " + str(ret))
+        time.sleep(15)
 
-  while True:
-    lightLevel, data = readLight()
-    #print("Light Level : " + format(lightLevel,'.2f') + " lx")
-    print(time.strftime('%c %Z') + ' - BH1750 Light:' + format(lightLevel,'.2f') + " lux")
-    ret = mqtt_client.publish("sensors/bh1750_lux","%s|%s|%s" % (current_milli_time(), data, lightLevel))
-    # print("Publish Returned: " + str(ret))
-    time.sleep(15)
 
 if __name__=="__main__":
-   main()
+    main()
