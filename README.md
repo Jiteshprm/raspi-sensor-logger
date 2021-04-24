@@ -61,8 +61,8 @@
     sqlite> PRAGMA auto_vacuum;
     1
 
-    
-    
+    cd
+    cd raspi-sensor-logger/
     sudo sh /opt/raspi-sensor-logger/stop_all_loggers.sh 
     git reset --hard
     git fetch;git pull
