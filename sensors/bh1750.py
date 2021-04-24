@@ -72,7 +72,7 @@ def on_disconnect(client, userdata, rc):
   global flag_connected
   flag_connected = 0
   if rc != 0:
-    print "Unexpected MQTT disconnection. Will auto-reconnect"
+    print ("Unexpected MQTT disconnection. Will auto-reconnect")
 
 
 def convertToNumber(data):

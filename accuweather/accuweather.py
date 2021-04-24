@@ -21,7 +21,7 @@ def on_publish(client,userdata,result):             #create function for callbac
 
 def on_disconnect(client, userdata, rc):
     if rc != 0:
-        print "Unexpected MQTT disconnection. Will auto-reconnect"
+        print ("Unexpected MQTT disconnection. Will auto-reconnect")
 
 
 def read_accuweather_feed():
