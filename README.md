@@ -69,6 +69,10 @@
     chmod +x install.sh
     sudo ./install.sh
     
+    sudo systemctl stop accuweather.service
+    sudo vi /opt/raspi-sensor-logger/accuweather/accuweather.py
+    sudo systemctl start accuweather.service
+    
     sudo sh /opt/raspi-sensor-logger/start_all_loggers.sh
     
     sudo journalctl -f -u ds18s20
