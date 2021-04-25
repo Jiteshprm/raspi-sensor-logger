@@ -6,6 +6,7 @@ import sqlite3
 import time
 from datetime import datetime, timedelta
 import threading
+import logging
 
 MQTT_HOST = '192.168.1.36'
 MQTT_PORT = 1883
@@ -162,6 +163,7 @@ def on_message(mqtt_client, user_data, message):
             execute_cleanup(db_conn)
         print_with_msg_timestamp ("on_message - Waiting for next message...")
     except:
+        logging.exception("message")
         os._exit(1)
 
 
