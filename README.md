@@ -90,3 +90,6 @@
     cp /home/birdofprey/mqtt_ramdisk.db /mnt/ramdisk
     
     screen /dev/cu.usbserial 115200
+    
+    
+    mosquitto_pub -h localhost -t sensors/outdoor_bme280_temp -m ""

@@ -123,42 +123,45 @@ def check_if_table_exists_or_else_create(table_name, user_data):
 
 
 def on_message(mqtt_client, user_data, message):
-    global timestamp_msg
-    timestamp_msg = current_milli_time()
-    print_with_msg_timestamp ("-----------------START------------------")
-    print_with_msg_timestamp ("on_message - received message: " + str(message.payload) + " topic: " + str(message.topic))
-    payload = message.payload.decode('utf-8')
-    table_name = message.topic.split("/")[1]
-    print_with_msg_timestamp ("on_message - table_name:" + table_name)
-    check_if_table_exists_or_else_create(table_name, user_data)
-    if ("cleanup" in payload):
-        payload_processed = payload.split("|")
-        timestamp_to_delete = payload_processed[1]
-        sql = 'DELETE FROM ' + table_name + ' WHERE timestamp_sensor_raw<' + timestamp_to_delete
-        cursor = db_conn.cursor()
-        print_with_msg_timestamp ("on_message - Executing Cleanup: " + sql)
-        cursor.execute(sql)
-    else:
-        db_conn = user_data['db_conn']
-        sql = 'INSERT INTO ' + table_name + '(timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str) VALUES (?, ?, ?, ?, ?, ?)'
-        cursor = db_conn.cursor()
-        payload_processed = payload.split("|")
-        timestamp_sensor_raw = payload_processed[0]
-        timestamp_sensor_str = current_milli_time_to_human(timestamp_sensor_raw)
-        value_raw = payload_processed[1]
-        value_str = payload_processed[2]
-        timestamp_msg_raw = timestamp_msg
-        timestamp_msg_str = current_milli_time_to_human(timestamp_msg_raw)
-        print_with_msg_timestamp ("on_message - Executing: " + sql + " (%s, %s, %s, %s, %s, %s)" % (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
-        cursor.execute(sql, (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
-    db_conn.commit()
-    cursor.close()
-    print_with_msg_timestamp ("on_message - Finished processing message")
-    print_with_msg_timestamp ("-----------------FINISH------------------")
-    global time_to_cleanup
-    if time_to_cleanup:
-        execute_cleanup(db_conn)
-    print_with_msg_timestamp ("on_message - Waiting for next message...")
+    try:
+        global timestamp_msg
+        timestamp_msg = current_milli_time()
+        print_with_msg_timestamp ("-----------------START------------------")
+        print_with_msg_timestamp ("on_message - received message: " + str(message.payload) + " topic: " + str(message.topic))
+        payload = message.payload.decode('utf-8')
+        table_name = message.topic.split("/")[1]
+        print_with_msg_timestamp ("on_message - table_name:" + table_name)
+        check_if_table_exists_or_else_create(table_name, user_data)
+        if ("cleanup" in payload):
+            payload_processed = payload.split("|")
+            timestamp_to_delete = payload_processed[1]
+            sql = 'DELETE FROM ' + table_name + ' WHERE timestamp_sensor_raw<' + timestamp_to_delete
+            cursor = db_conn.cursor()
+            print_with_msg_timestamp ("on_message - Executing Cleanup: " + sql)
+            cursor.execute(sql)
+        else:
+            db_conn = user_data['db_conn']
+            sql = 'INSERT INTO ' + table_name + '(timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str) VALUES (?, ?, ?, ?, ?, ?)'
+            cursor = db_conn.cursor()
+            payload_processed = payload.split("|")
+            timestamp_sensor_raw = payload_processed[0]
+            timestamp_sensor_str = current_milli_time_to_human(timestamp_sensor_raw)
+            value_raw = payload_processed[1]
+            value_str = payload_processed[2]
+            timestamp_msg_raw = timestamp_msg
+            timestamp_msg_str = current_milli_time_to_human(timestamp_msg_raw)
+            print_with_msg_timestamp ("on_message - Executing: " + sql + " (%s, %s, %s, %s, %s, %s)" % (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
+            cursor.execute(sql, (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
+        db_conn.commit()
+        cursor.close()
+        print_with_msg_timestamp ("on_message - Finished processing message")
+        print_with_msg_timestamp ("-----------------FINISH------------------")
+        global time_to_cleanup
+        if time_to_cleanup:
+            execute_cleanup(db_conn)
+        print_with_msg_timestamp ("on_message - Waiting for next message...")
+    except:
+        os._exit(1)
 
 
 def main():
