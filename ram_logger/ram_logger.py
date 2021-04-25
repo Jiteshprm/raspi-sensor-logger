@@ -1,5 +1,6 @@
 #!/usr/bin/python3 -u
 #https://lindevs.com/save-mqtt-data-to-sqlite-database-using-python/
+import os
 import paho.mqtt.client as mqtt
 import sqlite3
 import time
