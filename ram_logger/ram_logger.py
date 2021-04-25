@@ -166,8 +166,8 @@ def on_message(mqtt_client, user_data, message):
 
 
 def handle_excepthook(type, message, stack):
-    print_with_msg_timestamp("An unhandled exception occured:" + str(message) + ". Traceback: " )
-    #+ repr(traceback.format_tb(stack))
+    print_with_msg_timestamp("An unhandled exception occured:" + str(message) + ". Traceback: " + repr(traceback.format_tb(stack)))
+    #+
     time.sleep(1)
     os._exit(1)
 
