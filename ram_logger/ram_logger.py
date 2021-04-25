@@ -165,11 +165,8 @@ def on_message(mqtt_client, user_data, message):
         print_with_msg_timestamp ("on_message - Waiting for next message...")
 
 
-logger = logging.getLogger()
-
-
 def handle_excepthook(type, message, stack):
-    logger.error(f'An unhandled exception occured: {message}. Traceback: {traceback.format_tb(stack)}')
+    print_with_msg_timestamp(f'An unhandled exception occured: {message}. Traceback: {traceback.format_tb(stack)}')
     os._exit(1)
 
 
