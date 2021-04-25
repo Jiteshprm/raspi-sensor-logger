@@ -127,7 +127,6 @@ def check_if_table_exists_or_else_create(table_name, user_data):
 
 
 def on_message(mqtt_client, user_data, message):
-    try:
         global timestamp_msg
         timestamp_msg = current_milli_time()
         print_with_msg_timestamp ("-----------------START------------------")
@@ -164,11 +163,14 @@ def on_message(mqtt_client, user_data, message):
         if time_to_cleanup:
             execute_cleanup(db_conn)
         print_with_msg_timestamp ("on_message - Waiting for next message...")
-    except:
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        traceback_in_var = traceback.format_tb(exc_traceback)
-        print_with_msg_timestamp(traceback_in_var)
-        os._exit(1)
+
+
+logger = logging.getLogger()
+
+
+def handle_excepthook(type, message, stack):
+    logger.error(f'An unhandled exception occured: {message}. Traceback: {traceback.format_tb(stack)}')
+    os._exit(1)
 
 
 def main():
@@ -184,6 +186,8 @@ def main():
 
     mqtt_client.connect(MQTT_HOST, MQTT_PORT)
     cleanup_timer()
+
+    sys.excepthook = handle_excepthook
 
     print ("main - Waiting for Messages...")
     mqtt_client.loop_forever()
