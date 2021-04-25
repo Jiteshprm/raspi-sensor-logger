@@ -63,10 +63,12 @@
 
     cd
     cd raspi-sensor-logger/
+    sudo cp /opt/raspi-sensor-logger/accuweather/accuweather.py /tmp
     sudo sh /opt/raspi-sensor-logger/stop_all_loggers.sh 
     git reset --hard
     git fetch;git pull
     chmod +x install.sh
+    sudo cp /tmp/accuweather.py accuweather/accuweather.py
     sudo ./install.sh
     
     sudo systemctl stop accuweather.service

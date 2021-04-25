@@ -7,6 +7,8 @@ import time
 from datetime import datetime, timedelta
 import threading
 import logging
+import sys
+import traceback
 
 MQTT_HOST = '192.168.1.36'
 MQTT_PORT = 1883
@@ -163,7 +165,9 @@ def on_message(mqtt_client, user_data, message):
             execute_cleanup(db_conn)
         print_with_msg_timestamp ("on_message - Waiting for next message...")
     except:
-        logging.exception("message")
+        exc_type, exc_value, exc_traceback = sys.exc_info()
+        traceback_in_var = traceback.format_tb(exc_traceback)
+        print_with_msg_timestamp(traceback_in_var)
         os._exit(1)
 
 
