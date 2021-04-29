@@ -193,6 +193,11 @@ def process_messages(q):
         process_one_message(db_conn, topic, msg)
 
 
+class MyThread(threading.Thread):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 def main():
     print ("main - Starting")
     # db_conn = sqlite3.connect(DATABASE_FILE)
@@ -210,7 +215,7 @@ def main():
     sys.excepthook = handle_excepthook
     threading.excepthook = handle_excepthook
 
-    worker = Thread(target=process_messages, args=(task_queue,))
+    worker = MyThread(target=process_messages, args=(task_queue,))
     worker.setDaemon(True)
     worker.excepthook = handle_excepthook
     worker.start()
