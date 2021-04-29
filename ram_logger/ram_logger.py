@@ -187,7 +187,7 @@ def process_messages(q):
     """
     while True:
         topic, msg = q.get()
-        print 'process_messages - Topic: %s , Message %s' % topic, msg
+        print ('process_messages - Topic: %s , Message %s' % topic, msg)
         q.task_done()
 
 
