@@ -87,10 +87,9 @@ def check_if_table_exists_in_cache(table_name):
         return False
 
 
-def check_if_table_exists_in_db(table_name, user_data):
+def check_if_table_exists_in_db(table_name, db_conn):
     print_with_msg_timestamp ("check_if_table_exists_in_db - Table_name:" + table_name)
     table_exists_in_db = False
-    db_conn = user_data['db_conn']
     sql = """
             SELECT name FROM sqlite_master WHERE type='table' and name='%s';
                         """ % table_name
@@ -140,7 +139,7 @@ def process_one_message(db_conn, topic, payload):
     global timestamp_msg
     timestamp_msg = current_milli_time()
     print_with_msg_timestamp ("-----------------START------------------")
-    print_with_msg_timestamp ("process_one_message - received message: " + str(payload) + " topic: " + str(topic))
+    print_with_msg_timestamp ("process_one_message - received message: " + str(sds.payload) + " topic: " + str(topic))
     table_name = topic.split("/")[1]
     print_with_msg_timestamp ("process_one_message - table_name:" + table_name)
     check_if_table_exists_or_else_create(table_name, db_conn)
@@ -184,8 +183,9 @@ threading.excepthook = handle_excepthook
 
 def do_something_with_exception():
     exc_type, exc_value = sys.exc_info()[:2]
-    print ('Handling %s exception with message "%s" in %s' % \
+    print ('Handling %s exception with message "%s" in %s' %
           (exc_type.__name__, exc_value, threading.current_thread().name))
+    traceback.print_exception(*sys.exc_info)
     time.sleep(1)
     os._exit(1)
 
@@ -199,12 +199,12 @@ def process_messages(q):
     """
     db_conn = sqlite3.connect(DATABASE_FILE)
     while True:
-        # try:
+        try:
             topic, msg = q.get()
             print_with_msg_timestamp('process_messages - Topic: %s , Message %s' % (topic, msg))
             process_one_message(db_conn, topic, msg)
-        # except:
-        #     do_something_with_exception()
+        except:
+            do_something_with_exception()
 
 
 def main():
