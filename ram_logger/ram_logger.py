@@ -1,14 +1,15 @@
 #!/usr/bin/python3 -u
-#https://lindevs.com/save-mqtt-data-to-sqlite-database-using-python/
+# https://lindevs.com/save-mqtt-data-to-sqlite-database-using-python/
 import os
 import paho.mqtt.client as mqtt
 import sqlite3
 import time
 from datetime import datetime, timedelta
 import threading
-import logging
 import sys
 import traceback
+import multiprocessing as mp
+from threading import Thread
 
 MQTT_HOST = '192.168.1.36'
 MQTT_PORT = 1883
@@ -24,6 +25,11 @@ timestamp_msg = 0
 next_call = time.time()
 time_to_cleanup = False
 
+# task queue to overcome issue with paho when using multiple threads:
+#   https://github.com/eclipse/paho.mqtt.python/issues/354
+# https://cumulocity.com/guides/device-sdk/mqtt-examples/
+task_queue = mp.Queue()
+
 
 def current_milli_time():
     return round(time.time() * 1000)
@@ -37,10 +43,10 @@ def print_with_msg_timestamp(msg):
     print ("[" + current_milli_time_to_human(timestamp_msg) + "]: " + msg)
 
 
-#https://stackoverflow.com/questions/4415672/python-theading-timer-how-to-pass-argument-to-the-callback
-#https://stackoverflow.com/questions/8600161/executing-periodic-actions
-#https://stackoverflow.com/questions/46402022/subtract-hours-and-minutes-from-time
-#https://stackoverflow.com/questions/11743019/convert-python-datetime-to-epoch-with-strftime
+# https://stackoverflow.com/questions/4415672/python-theading-timer-how-to-pass-argument-to-the-callback
+# https://stackoverflow.com/questions/8600161/executing-periodic-actions
+# https://stackoverflow.com/questions/46402022/subtract-hours-and-minutes-from-time
+# https://stackoverflow.com/questions/11743019/convert-python-datetime-to-epoch-with-strftime
 def cleanup_timer():
     print_with_msg_timestamp("========cleanup_timer - Started==========")
     global time_to_cleanup
@@ -69,7 +75,7 @@ def execute_cleanup (db_conn):
 
 
 def on_connect(mqtt_client, user_data, flags, conn_result):
-    mqtt_client.subscribe(TOPIC,2)
+    mqtt_client.subscribe(TOPIC, 2)
 
 
 def check_if_table_exists_in_cache(table_name):
@@ -127,49 +133,62 @@ def check_if_table_exists_or_else_create(table_name, user_data):
 
 
 def on_message(mqtt_client, user_data, message):
-        global timestamp_msg
-        timestamp_msg = current_milli_time()
-        print_with_msg_timestamp ("-----------------START------------------")
-        print_with_msg_timestamp ("on_message - received message: " + str(message.payload) + " topic: " + str(message.topic))
-        payload = message.payload.decode('utf-8')
-        table_name = message.topic.split("/")[1]
-        print_with_msg_timestamp ("on_message - table_name:" + table_name)
-        check_if_table_exists_or_else_create(table_name, user_data)
-        if ("cleanup" in payload):
-            payload_processed = payload.split("|")
-            timestamp_to_delete = payload_processed[1]
-            sql = 'DELETE FROM ' + table_name + ' WHERE timestamp_sensor_raw<' + timestamp_to_delete
-            cursor = db_conn.cursor()
-            print_with_msg_timestamp ("on_message - Executing Cleanup: " + sql)
-            cursor.execute(sql)
-        else:
-            db_conn = user_data['db_conn']
-            sql = 'INSERT INTO ' + table_name + '(timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str) VALUES (?, ?, ?, ?, ?, ?)'
-            cursor = db_conn.cursor()
-            payload_processed = payload.split("|")
-            timestamp_sensor_raw = payload_processed[0]
-            timestamp_sensor_str = current_milli_time_to_human(timestamp_sensor_raw)
-            value_raw = payload_processed[1]
-            value_str = payload_processed[2]
-            timestamp_msg_raw = timestamp_msg
-            timestamp_msg_str = current_milli_time_to_human(timestamp_msg_raw)
-            print_with_msg_timestamp ("on_message - Executing: " + sql + " (%s, %s, %s, %s, %s, %s)" % (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
-            cursor.execute(sql, (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
-        db_conn.commit()
-        cursor.close()
-        print_with_msg_timestamp ("on_message - Finished processing message")
-        print_with_msg_timestamp ("-----------------FINISH------------------")
-        global time_to_cleanup
-        if time_to_cleanup:
-            execute_cleanup(db_conn)
-        print_with_msg_timestamp ("on_message - Waiting for next message...")
+    task_queue(message.payload, message.topic)
+    global timestamp_msg
+    timestamp_msg = current_milli_time()
+    print_with_msg_timestamp ("-----------------START------------------")
+    print_with_msg_timestamp ("on_message - received message: " + str(message.payload) + " topic: " + str(message.topic))
+    payload = message.payload.decode('utf-8')
+    table_name = message.topic.split("/")[1]
+    print_with_msg_timestamp ("on_message - table_name:" + table_name)
+    check_if_table_exists_or_else_create(table_name, user_data)
+    if "cleanup" in payload:
+        payload_processed = payload.split("|")
+        timestamp_to_delete = payload_processed[1]
+        sql = 'DELETE FROM ' + table_name + ' WHERE timestamp_sensor_raw<' + timestamp_to_delete
+        cursor = db_conn.cursor()
+        print_with_msg_timestamp ("on_message - Executing Cleanup: " + sql)
+        cursor.execute(sql)
+    else:
+        db_conn = user_data['db_conn']
+        sql = 'INSERT INTO ' + table_name + '(timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str) VALUES (?, ?, ?, ?, ?, ?)'
+        cursor = db_conn.cursor()
+        payload_processed = payload.split("|")
+        timestamp_sensor_raw = payload_processed[0]
+        timestamp_sensor_str = current_milli_time_to_human(timestamp_sensor_raw)
+        value_raw = payload_processed[1]
+        value_str = payload_processed[2]
+        timestamp_msg_raw = timestamp_msg
+        timestamp_msg_str = current_milli_time_to_human(timestamp_msg_raw)
+        print_with_msg_timestamp ("on_message - Executing: " + sql + " (%s, %s, %s, %s, %s, %s)" % (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
+        cursor.execute(sql, (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
+    db_conn.commit()
+    cursor.close()
+    print_with_msg_timestamp ("on_message - Finished processing message")
+    print_with_msg_timestamp ("-----------------FINISH------------------")
+    global time_to_cleanup
+    if time_to_cleanup:
+        execute_cleanup(db_conn)
+    print_with_msg_timestamp ("on_message - Waiting for next message...")
 
 
 def handle_excepthook(type, message, stack):
     print_with_msg_timestamp("An unhandled exception occured:" + str(message) + ". Traceback: " + repr(traceback.format_tb(stack)))
-    #+
     time.sleep(1)
     os._exit(1)
+
+
+def process_messages(q):
+    """This is the worker thread function.
+    It processes items in the queue one after
+    another.  These daemon threads go into an
+    infinite loop, and only exit when
+    the main thread ends.
+    """
+    while True:
+        topic, msg = q.get()
+        print 'process_messages - Topic: %s , Message %s' % topic, msg
+        q.task_done()
 
 
 def main():
@@ -187,6 +206,11 @@ def main():
     cleanup_timer()
 
     sys.excepthook = handle_excepthook
+
+    worker = Thread(target=process_messages, args=(task_queue,))
+    worker.setDaemon(True)
+    worker.excepthook = handle_excepthook
+    worker.start()
 
     print ("main - Waiting for Messages...")
     mqtt_client.loop_forever()
