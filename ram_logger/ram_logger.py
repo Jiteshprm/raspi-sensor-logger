@@ -140,16 +140,16 @@ def process_one_message(db_conn, topic, payload):
     global timestamp_msg
     timestamp_msg = current_milli_time()
     print_with_msg_timestamp ("-----------------START------------------")
-    print_with_msg_timestamp ("on_message - received message: " + str(message.payload) + " topic: " + str(message.topic))
+    print_with_msg_timestamp ("process_one_message - received message: " + str(qwq.payload) + " topic: " + str(topic))
     table_name = topic.split("/")[1]
-    print_with_msg_timestamp ("on_message - table_name:" + table_name)
+    print_with_msg_timestamp ("process_one_message - table_name:" + table_name)
     check_if_table_exists_or_else_create(table_name, db_conn)
     if "cleanup" in payload:
         payload_processed = payload.split("|")
         timestamp_to_delete = payload_processed[1]
         sql = 'DELETE FROM ' + table_name + ' WHERE timestamp_sensor_raw<' + timestamp_to_delete
         cursor = db_conn.cursor()
-        print_with_msg_timestamp ("on_message - Executing Cleanup: " + sql)
+        print_with_msg_timestamp ("process_one_message - Executing Cleanup: " + sql)
         cursor.execute(sql)
     else:
         sql = 'INSERT INTO ' + table_name + '(timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str) VALUES (?, ?, ?, ?, ?, ?)'
@@ -161,16 +161,16 @@ def process_one_message(db_conn, topic, payload):
         value_str = payload_processed[2]
         timestamp_msg_raw = timestamp_msg
         timestamp_msg_str = current_milli_time_to_human(timestamp_msg_raw)
-        print_with_msg_timestamp ("on_message - Executing: " + sql + " (%s, %s, %s, %s, %s, %s)" % (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
+        print_with_msg_timestamp ("process_one_message - Executing: " + sql + " (%s, %s, %s, %s, %s, %s)" % (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
         cursor.execute(sql, (timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str))
     db_conn.commit()
     cursor.close()
-    print_with_msg_timestamp ("on_message - Finished processing message")
+    print_with_msg_timestamp ("process_one_message - Finished processing message")
     print_with_msg_timestamp ("-----------------FINISH------------------")
     global time_to_cleanup
     if time_to_cleanup:
         execute_cleanup(db_conn)
-    print_with_msg_timestamp ("on_message - Waiting for next message...")
+    print_with_msg_timestamp ("process_one_message - Waiting for next message...")
 
 
 def handle_excepthook(type, message, stack):
@@ -208,6 +208,7 @@ def main():
     cleanup_timer()
 
     sys.excepthook = handle_excepthook
+    threading.excepthook = handle_excepthook
 
     worker = Thread(target=process_messages, args=(task_queue,))
     worker.setDaemon(True)
