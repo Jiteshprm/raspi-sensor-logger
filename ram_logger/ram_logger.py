@@ -69,7 +69,7 @@ def execute_cleanup (db_conn):
 
 
 def on_connect(mqtt_client, user_data, flags, conn_result):
-    mqtt_client.subscribe(TOPIC)
+    mqtt_client.subscribe(TOPIC,2)
 
 
 def check_if_table_exists_in_cache(table_name):

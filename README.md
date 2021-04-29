@@ -29,6 +29,10 @@
     select * from outdoor_bme280_temp;
     select * from outdoor_sht31d_hum;
     select * from outdoor_sht31d_temp;
+    select * from outdoor_accel;
+    select * from outdoor_gyro;
+    select * from outdoor_mag;
+    select * from outdoor_uv;
     
     delete from bh1750_lux where timestamp_sensor_raw<1619046010000;
     delete from bme280_hum where timestamp_sensor_raw<1619046010000;
@@ -43,6 +47,10 @@
         delete from outdoor_sht31d_hum where timestamp_sensor_raw<1619046010000;
         delete from outdoor_sht31d_temp where timestamp_sensor_raw<1619046010000;
     
+    delete from outdoor_accel where timestamp_sensor_raw>0;
+    delete from outdoor_gyro where timestamp_sensor_raw>0;
+    delete from outdoor_mag where timestamp_sensor_raw>0;
+    delete from outdoor_uv where timestamp_sensor_raw>0;
     
     Enable auto vacuum:
     https://www.sqlite.org/pragma.html#pragma_auto_vacuum
