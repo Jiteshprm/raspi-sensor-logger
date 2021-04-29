@@ -139,7 +139,7 @@ def process_one_message(db_conn, topic, payload):
     global timestamp_msg
     timestamp_msg = current_milli_time()
     print_with_msg_timestamp ("-----------------START------------------")
-    print_with_msg_timestamp ("process_one_message - received message: " + str(sds.payload) + " topic: " + str(topic))
+    print_with_msg_timestamp ("process_one_message - received message: " + str(payload) + " topic: " + str(topic))
     table_name = topic.split("/")[1]
     print_with_msg_timestamp ("process_one_message - table_name:" + table_name)
     check_if_table_exists_or_else_create(table_name, db_conn)
