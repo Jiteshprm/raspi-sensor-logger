@@ -186,7 +186,8 @@ def do_something_with_exception():
     exc_type, exc_value = sys.exc_info()[:2]
     print ('Handling %s exception with message "%s" in %s' % \
           (exc_type.__name__, exc_value, threading.current_thread().name))
-
+    time.sleep(1)
+    os._exit(1)
 
 def process_messages(q):
     """This is the worker thread function.
