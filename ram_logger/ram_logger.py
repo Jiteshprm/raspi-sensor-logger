@@ -216,7 +216,7 @@ def main():
 
     sys.excepthook = handle_excepthook
 
-    worker = MyThread(target=process_messages, args=(task_queue,))
+    worker = MyThread(target=process_messages, args=(3, task_queue,))
     worker.setDaemon(True)
     worker.excepthook = handle_excepthook
     worker.start()
