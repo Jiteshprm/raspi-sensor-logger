@@ -189,6 +189,7 @@ def do_something_with_exception():
     time.sleep(1)
     os._exit(1)
 
+
 def process_messages(q):
     """This is the worker thread function.
     It processes items in the queue one after
@@ -198,12 +199,12 @@ def process_messages(q):
     """
     db_conn = sqlite3.connect(DATABASE_FILE)
     while True:
-        try:
+        # try:
             topic, msg = q.get()
             print_with_msg_timestamp('process_messages - Topic: %s , Message %s' % (topic, msg))
             process_one_message(db_conn, topic, msg)
-        except:
-            do_something_with_exception()
+        # except:
+        #     do_something_with_exception()
 
 
 def main():
