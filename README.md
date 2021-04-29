@@ -103,3 +103,4 @@
     
     
     mosquitto_pub -h localhost -t sensors/outdoor_bme280_temp -m ""
+    mosquitto_sub -h 127.0.0.1 -v -t sensors/#

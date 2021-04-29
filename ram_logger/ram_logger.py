@@ -133,7 +133,7 @@ def check_if_table_exists_or_else_create(table_name, user_data):
 
 
 def on_message(mqtt_client, user_data, message):
-    task_queue.put((message.payload, message.topic))
+    task_queue.put((message.topic, message.payload))
     global timestamp_msg
     timestamp_msg = current_milli_time()
     print_with_msg_timestamp ("-----------------START------------------")
@@ -188,7 +188,6 @@ def process_messages(q):
     while True:
         topic, msg = q.get()
         print ('process_messages - Topic: %s , Message %s' % (topic, msg))
-        q.task_done()
 
 
 def main():
