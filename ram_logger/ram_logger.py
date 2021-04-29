@@ -106,9 +106,8 @@ def check_if_table_exists_in_db(table_name, user_data):
     return table_exists_in_db
 
 
-def create_table_if_not_exists(table_name, user_data):
+def create_table_if_not_exists(table_name, db_conn):
     print_with_msg_timestamp ("create_table_if_not_exists - table_name:" + table_name)
-    db_conn = user_data['db_conn']
     sql = """
     CREATE TABLE IF NOT EXISTS """ + table_name + """ (
         timestamp_sensor_raw INTEGER PRIMARY KEY NOT NULL,
@@ -126,22 +125,25 @@ def create_table_if_not_exists(table_name, user_data):
     table_name_cache.add(table_name)
 
 
-def check_if_table_exists_or_else_create(table_name, user_data):
+def check_if_table_exists_or_else_create(table_name, db_conn):
     if not check_if_table_exists_in_cache(table_name):
-        if not check_if_table_exists_in_db(table_name, user_data):
-            create_table_if_not_exists(table_name, user_data)
+        if not check_if_table_exists_in_db(table_name, db_conn):
+            create_table_if_not_exists(table_name, db_conn)
 
 
 def on_message(mqtt_client, user_data, message):
-    task_queue.put((message.topic, message.payload))
+    payload = message.payload.decode('utf-8')
+    task_queue.put((message.topic, payload))
+
+
+def process_one_message(db_conn, topic, payload):
     global timestamp_msg
     timestamp_msg = current_milli_time()
     print_with_msg_timestamp ("-----------------START------------------")
     print_with_msg_timestamp ("on_message - received message: " + str(message.payload) + " topic: " + str(message.topic))
-    payload = message.payload.decode('utf-8')
-    table_name = message.topic.split("/")[1]
+    table_name = topic.split("/")[1]
     print_with_msg_timestamp ("on_message - table_name:" + table_name)
-    check_if_table_exists_or_else_create(table_name, user_data)
+    check_if_table_exists_or_else_create(table_name, db_conn)
     if "cleanup" in payload:
         payload_processed = payload.split("|")
         timestamp_to_delete = payload_processed[1]
@@ -150,7 +152,6 @@ def on_message(mqtt_client, user_data, message):
         print_with_msg_timestamp ("on_message - Executing Cleanup: " + sql)
         cursor.execute(sql)
     else:
-        db_conn = user_data['db_conn']
         sql = 'INSERT INTO ' + table_name + '(timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str) VALUES (?, ?, ?, ?, ?, ?)'
         cursor = db_conn.cursor()
         payload_processed = payload.split("|")
@@ -185,18 +186,20 @@ def process_messages(q):
     infinite loop, and only exit when
     the main thread ends.
     """
+    db_conn = sqlite3.connect(DATABASE_FILE)
     while True:
         topic, msg = q.get()
-        print ('process_messages - Topic: %s , Message %s' % (topic, msg))
+        print_with_msg_timestamp('process_messages - Topic: %s , Message %s' % (topic, msg))
+        process_one_message(db_conn, topic, msg)
 
 
 def main():
     print ("main - Starting")
-    db_conn = sqlite3.connect(DATABASE_FILE)
+    # db_conn = sqlite3.connect(DATABASE_FILE)
 
     mqtt_client = mqtt.Client(MQTT_CLIENT_ID)
-    #mqtt_client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
-    mqtt_client.user_data_set({'db_conn': db_conn})
+    # mqtt_client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
+    # mqtt_client.user_data_set({'db_conn': db_conn})
 
     mqtt_client.on_connect = on_connect
     mqtt_client.on_message = on_message
