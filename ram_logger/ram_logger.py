@@ -181,6 +181,13 @@ def handle_excepthook(type, message, stack):
 
 threading.excepthook = handle_excepthook
 
+
+def do_something_with_exception():
+    exc_type, exc_value = sys.exc_info()[:2]
+    print 'Handling %s exception with message "%s" in %s' % \
+          (exc_type.__name__, exc_value, threading.current_thread().name)
+
+
 def process_messages(q):
     """This is the worker thread function.
     It processes items in the queue one after
@@ -190,9 +197,12 @@ def process_messages(q):
     """
     db_conn = sqlite3.connect(DATABASE_FILE)
     while True:
-        topic, msg = q.get()
-        print_with_msg_timestamp('process_messages - Topic: %s , Message %s' % (topic, msg))
-        process_one_message(db_conn, topic, msg)
+        try:
+            topic, msg = q.get()
+            print_with_msg_timestamp('process_messages - Topic: %s , Message %s' % (topic, msg))
+            process_one_message(db_conn, topic, msg)
+        except:
+            do_something_with_exception()
 
 
 class MyThread(threading.Thread):
@@ -216,7 +226,7 @@ def main():
 
     sys.excepthook = handle_excepthook
 
-    worker = MyThread(target=process_messages, args=(3, task_queue,))
+    worker = MyThread(target=process_messages, args=(task_queue,))
     worker.setDaemon(True)
     worker.excepthook = handle_excepthook
     worker.start()
