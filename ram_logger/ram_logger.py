@@ -179,6 +179,8 @@ def handle_excepthook(type, message, stack):
     os._exit(1)
 
 
+threading.excepthook = handle_excepthook
+
 def process_messages(q):
     """This is the worker thread function.
     It processes items in the queue one after
@@ -213,7 +215,6 @@ def main():
     cleanup_timer()
 
     sys.excepthook = handle_excepthook
-    threading.excepthook = handle_excepthook
 
     worker = MyThread(target=process_messages, args=(task_queue,))
     worker.setDaemon(True)
