@@ -33,6 +33,8 @@
     select * from outdoor_gyro;
     select * from outdoor_mag;
     select * from outdoor_uv;
+    select * from outdoor_wifi_signal;
+    select * from outdoor_memory;
     
     delete from bh1750_lux where timestamp_sensor_raw<1619046010000;
     delete from bme280_hum where timestamp_sensor_raw<1619046010000;
