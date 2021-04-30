@@ -152,7 +152,7 @@ def process_one_message(db_conn, topic, payload):
         print_with_msg_timestamp ("process_one_message - Executing Cleanup: " + sql)
         cursor.execute(sql)
     else:
-        sql = 'INSERT INTO ' + table_name + '(timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str) VALUES (?, ?, ?, ?, ?, ?)'
+        sql = 'INSERT OR IGNORE INTO ' + table_name + '(timestamp_sensor_raw, timestamp_sensor_str, timestamp_msg_raw, timestamp_msg_str, value_raw, value_str) VALUES (?, ?, ?, ?, ?, ?)'
         cursor = db_conn.cursor()
         payload_processed = payload.split("|")
         timestamp_sensor_raw = payload_processed[0]
