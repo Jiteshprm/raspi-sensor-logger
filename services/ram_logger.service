@@ -9,7 +9,7 @@ Description=Ram Logger Service
 OnFailure=notify@%n.service
 
 [Service]
-User=birdofprey
+User=root
 # The configuration file application.properties should be here:
 
 #change this to your workspace
