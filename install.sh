@@ -19,7 +19,7 @@ else
     mkdir /mnt/ramdisk
     mount -osize=30m tmpfs /mnt/ramdisk -t tmpfs
     chmod 777 /mnt/ramdisk
-    echo "VACUUM;PRAGMA auto_vacuum = 1;.quit" | sqlite3 /mnt/ramdisk/mqtt_ramdisk.db
+    sqlite3 /mnt/ramdisk/mqtt_ramdisk.db "VACUUM;PRAGMA auto_vacuum = 1;"
 fi
 
 cp /opt/raspi-sensor-logger/services/* /etc/systemd/system
