@@ -93,7 +93,8 @@
     sudo journalctl -f -u bh1750 
     sudo journalctl -f -u persistent_logger 
     sudo journalctl -f -u ram_logger 
-    sudo journalctl -f -u accuweather 
+    sudo journalctl -f -u accuweather
+    sudo journalctl -f -u ram_logger_create_folder 
     
     sudo sh /opt/raspi-sensor-logger/stop_all_loggers.sh
     cp /mnt/ramdisk/mqtt_ramdisk.db /home/birdofprey    
