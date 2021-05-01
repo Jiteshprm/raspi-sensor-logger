@@ -6,6 +6,7 @@ if [ "$EUID" -ne 0 ]
 fi
 
 set -x
+systemctl stop ram_logger_create_folder.service
 systemctl stop ram_logger.service
 systemctl stop bme280.service
 systemctl stop ds18s20.service

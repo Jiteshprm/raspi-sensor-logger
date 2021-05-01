@@ -9,5 +9,3 @@ else
     chmod 777 /mnt/ramdisk
     sqlite3 /mnt/ramdisk/mqtt_ramdisk.db "VACUUM;PRAGMA auto_vacuum = 1;"
 fi
-
-/opt/raspi-sensor-logger/ram_logger/ram_logger.py

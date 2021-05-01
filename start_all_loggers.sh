@@ -7,6 +7,9 @@ fi
 
 set -x
 systemctl daemon-reload
+systemctl enable ram_logger_create_folder.service
+systemctl start ram_logger_create_folder.service
+sleep 1s
 systemctl enable ram_logger.service
 systemctl start ram_logger.service
 sleep 1s
