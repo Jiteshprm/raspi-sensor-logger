@@ -44,10 +44,16 @@ class myHandler(BaseHTTPRequestHandler):
             self.send_error(404, 'File Not Found: %s' % self.path)
 
 
+class TimeoutingHTTPServer(HTTPServer):
+    def finish_request(self, request, client_address):
+        request.settimeout(10)  # Really short timeout as there is only 1 thread
+        HTTPServer.finish_request(self, request, client_address)
+
+
 try:
     # Create a web server and define the handler to manage the
     # incoming request
-    server = HTTPServer(('', PORT_NUMBER), myHandler)
+    server = TimeoutingHTTPServer(('', PORT_NUMBER), myHandler)
     print ('Started http server on port ', PORT_NUMBER)
 
     # Wait forever for incoming http requests
