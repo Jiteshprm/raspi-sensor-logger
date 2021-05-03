@@ -19,20 +19,28 @@ class myHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         try:
             if self.path.endswith(".bin"):
+                print ('Sending: ', self.path)
                 file_size = os.stat(sketch_update_file_path).st_size
+                print ('File Size: ', file_size)
                 f = open(sketch_update_file_path, 'rb')
                 self.send_response(200)
                 self.send_header('Content-Type', 'text/plain')
                 self.send_header('Content-Length', file_size)
                 self.end_headers()
                 # Send the html message
+                print ('Writing Content...')
                 self.wfile.write(f.read())
+                print ('Closing File...')
                 f.close()
-                call(command)
+                print ('Deleting File...')
+                # call(command)
+                os.remove(sketch_update_file_path)
                 return
             else:
+                print ('Error, File Not Found 404: ', self.path)
                 self.send_error(404, 'File Not Found: %s' % self.path)
         except IOError:
+            print ('Error, File Not Found 404: ', self.path)
             self.send_error(404, 'File Not Found: %s' % self.path)
 
 
@@ -40,7 +48,7 @@ try:
     # Create a web server and define the handler to manage the
     # incoming request
     server = HTTPServer(('', PORT_NUMBER), myHandler)
-    print ('Started http server on port ' , PORT_NUMBER)
+    print ('Started http server on port ', PORT_NUMBER)
 
     # Wait forever for incoming http requests
     server.serve_forever()
