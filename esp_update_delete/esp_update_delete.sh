@@ -2,5 +2,6 @@
 
 set -x
 echo "Running:"
-rm -rf /home/birdofprey/esp8266/OutdoorWeatherStation.ino.esp8285.bin
-echo "Result: $?"
+tail -f -n 0 /usr/local/nginx/logs/access.log | awk '
+                    /OutdoorWeatherStation/ { system("echo Sleep 10s;sleep 10;rm -rf /home/birdofprey/esp8266/OutdoorWeatherStation.ino.esp8285.bin;echo Result: $?") }'
+

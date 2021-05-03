@@ -17,7 +17,7 @@ WorkingDirectory=/opt/raspi-sensor-logger/esp_update_delete
 
 #path to executable.
 #executable is a bash script which calls jar file
-ExecStart=/opt/raspi-sensor-logger/esp_update_delete/esp_update_delete.py
+ExecStart=/opt/raspi-sensor-logger/esp_update_delete/esp_update_delete.sh
 
 SuccessExitStatus=0
 TimeoutStopSec=10
