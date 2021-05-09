@@ -36,6 +36,7 @@
     select * from outdoor_wifi_signal;
     select * from outdoor_memory;
     select * from outdoor_crash;
+    select * from outdoor_restart;
     
     delete from bh1750_lux where timestamp_sensor_raw<1619046010000;
     delete from bme280_hum where timestamp_sensor_raw<1619046010000;
@@ -109,3 +110,19 @@
     
     mosquitto_pub -h localhost -t sensors/outdoor_bme280_temp -m ""
     mosquitto_sub -h 127.0.0.1 -v -t sensors/#
+----Enable Mosquitto Raspberry---
+sudo service  mosquitto stop
+sudo systemctl enable mosquitto
+sudo service  mosquitto status
+sudo service mosquitto start 
+-----------------------------------
+sudo less /var/log/mosquitto/mosquitto.log
+
+1620475927: New client connected from 192.168.1.99:63471 as ESP8266Client-69a3 (p2, c1, k15).
+1620475927: Client ESP8266Client-69a3 disconnected due to malformed packet.
+1620475933: New connection from 192.168.1.99:51683 on port 1883.
+1620475933: New client connected from 192.168.1.99:51683 as ESP8266Client-669d (p2, c1, k15).
+1620475933: Client ESP8266Client-669d disconnected due to malformed packet.
+1620475934: Client MQTT BH1750 Light Meter closed its connection.
+
+sudo tcpdump -i enxb827eb6de4f7 -nn -s0 -X -v port 1883 and host 192.168.1.36 -w test.pcap
