@@ -17,7 +17,7 @@ WorkingDirectory=/opt/raspi-sensor-logger/ram_logger
 
 #path to executable.
 #executable is a bash script which calls jar file
-ExecStart=/opt/raspi-sensor-logger/ram_logger/ram_logger.py
+ExecStart=/opt/raspi-sensor-logger/ram_logger/ram_logger.sh
 
 SuccessExitStatus=0
 TimeoutStopSec=10
