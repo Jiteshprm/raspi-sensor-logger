@@ -13,4 +13,4 @@ function fail {
     sleep 2
     exit 1
 }
-python -u /opt/raspi-sensor-logger/ram_logger/ram_logger.py || fail
+python3 -u /opt/raspi-sensor-logger/ram_logger/ram_logger.py || fail
