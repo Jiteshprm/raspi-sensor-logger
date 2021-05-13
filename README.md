@@ -126,3 +126,4 @@ sudo less /var/log/mosquitto/mosquitto.log
 1620475934: Client MQTT BH1750 Light Meter closed its connection.
 
 sudo tcpdump -i enxb827eb6de4f7 -nn -s0 -X -v port 1883 and host 192.168.1.36 -w test.pcap
+sudo tcpdump -i enxb827eb6de4f7 -nn -s0 -v port 21
