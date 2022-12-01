@@ -104,6 +104,6 @@ def main():
     print_with_msg_timestamp ("-----------------FINISH------------------")
 
 
-while True:
-    main()
+#while True:
+main()
 

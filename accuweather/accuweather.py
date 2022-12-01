@@ -37,9 +37,9 @@ mqtt_client = mqtt.Client(MQTT_CLIENT_ID)
 mqtt_client.on_publish = on_publish
 mqtt_client.on_disconnect = on_disconnect
 
-while True:
-    mqtt_client.connect(MQTT_HOST, MQTT_PORT)
-    feed = read_accuweather_feed()
-    ret = mqtt_client.publish("sensors/accuweather_mk", "%s|%s|%s" % (current_milli_time(), str(0), feed))
-    print(time.strftime('%c %Z') + ' - Accuweather JSON : ', str(feed))
+#while True:
+mqtt_client.connect(MQTT_HOST, MQTT_PORT)
+feed = read_accuweather_feed()
+ret = mqtt_client.publish("sensors/accuweather_mk", "%s|%s|%s" % (current_milli_time(), str(0), feed))
+print(time.strftime('%c %Z') + ' - Accuweather JSON : ', str(feed))
 #     time.sleep(1800)
