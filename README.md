@@ -127,3 +127,42 @@ sudo less /var/log/mosquitto/mosquitto.log
 
 sudo tcpdump -i enxb827eb6de4f7 -nn -s0 -X -v port 1883 and host 192.168.1.36 -w test.pcap
 sudo tcpdump -i enxb827eb6de4f7 -nn -s0 -v port 21
+
+
+sqlite> SELECT SUM("pgsize"),name FROM "dbstat" group by name;
+268288|accuweather_upper_holloway
+1797120|bh1750_lux
+719872|bme280_hum
+718848|bme280_pres
+599040|bme280_temp
+1129472|ds18s20_temp
+3099648|outdoor_accel
+1796096|outdoor_bh1750_lux
+1810432|outdoor_bme280_alt
+1793024|outdoor_bme280_hum
+1810432|outdoor_bme280_pres
+1793024|outdoor_bme280_temp
+1024|outdoor_crash
+3099648|outdoor_gyro
+3112960|outdoor_mag
+1959936|outdoor_memory
+1024|outdoor_restart
+1793024|outdoor_sht31d_hum
+1793024|outdoor_sht31d_temp
+1024|outdoor_update
+2332672|outdoor_uv
+12288|outdoor_wifi_signal
+11264|sqlite_master
+
+scp /Users/jitesh/Documents/Arduino/OutdoorWeatherStation/OutdoorWeatherStation.ino.generic.bin birdofprey@192.168.1.36:/home/birdofprey/esp8266
+
+
+------------
+systemctl disable ram_logger_create_folder.service
+systemctl disable ram_logger.service
+systemctl disable bh1750.service
+systemctl disable bme280.service
+systemctl disable ds18s20.service
+systemctl disable persistent_logger.service
+systemctl disable accuweather.service
+systemctl disable esp_update_delete.service

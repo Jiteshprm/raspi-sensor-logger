@@ -25,7 +25,7 @@ def on_disconnect(client, userdata, rc):
 
 
 def read_accuweather_feed():
-    response = requests.get("")
+    response = requests.get("http://dataservice.accuweather.com/currentconditions/v1/locationKey?apikey=&details=true&locationKey=49370_PC")
     if response.status_code == 200:
         return json.dumps(response.json())
     else:
@@ -40,6 +40,6 @@ mqtt_client.on_disconnect = on_disconnect
 while True:
     mqtt_client.connect(MQTT_HOST, MQTT_PORT)
     feed = read_accuweather_feed()
-    ret = mqtt_client.publish("sensors/accuweather_upper_holloway", "%s|%s|%s" % (current_milli_time(), str(0), feed))
+    ret = mqtt_client.publish("sensors/accuweather_mk", "%s|%s|%s" % (current_milli_time(), str(0), feed))
     print(time.strftime('%c %Z') + ' - Accuweather JSON : ', str(feed))
-    time.sleep(1800)
+#     time.sleep(1800)

@@ -21,8 +21,8 @@ ExecStart=/opt/raspi-sensor-logger/ram_logger/ram_logger.sh
 
 SuccessExitStatus=0
 TimeoutStopSec=10
-Restart=on-failure
-RestartSec=5
+#Restart=on-failure
+#RestartSec=5
 
 [Install]
 WantedBy=multi-user.target

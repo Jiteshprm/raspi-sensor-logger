@@ -3,7 +3,7 @@ import sqlite3
 import time
 import datetime
 
-DATABASE_FILE = '/mnt/ramdisk/mqtt_ramdisk.db'
+DATABASE_FILE = '/media/birdofprey/Sandisk/sensordb/mqtt_ramdisk.db'
 DATABASE_FILE_PERSISTENT = '/home/birdofprey/sensor_data.db'
 
 
@@ -106,4 +106,4 @@ def main():
 
 while True:
     main()
-    time.sleep(7200)
+

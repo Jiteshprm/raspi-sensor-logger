@@ -21,8 +21,6 @@ ExecStart=/opt/raspi-sensor-logger/persistent_logger/persistent_logger.py
 
 SuccessExitStatus=0
 TimeoutStopSec=10
-Restart=on-failure
-RestartSec=5
 
 [Install]
 WantedBy=multi-user.target

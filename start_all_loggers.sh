@@ -1,6 +1,6 @@
 #/bin/bash
 #Must be run as sudo
-if [ "$EUID" -ne 0 ]
+if [ $EUID -ne 0 ]
   then echo "Please run with sudo!"
   exit
 fi
@@ -23,7 +23,9 @@ systemctl enable ds18s20.service
 systemctl start ds18s20.service
 systemctl enable persistent_logger.service
 systemctl start persistent_logger.service
+systemctl enable --now persistent_logger.timer
 systemctl enable accuweather.service
+systemctl enable --now accuweather.timer
 systemctl start accuweather.service
 systemctl enable esp_update_delete.service
 systemctl start esp_update_delete.service

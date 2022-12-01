@@ -1,7 +1,7 @@
 #/bin/bash
 #Must be run as sudo
 echo $EUID
-if [ "$EUID" -ne 0 ]
+if [ $EUID -ne 0 ]
   then echo "Please run with sudo!"
   exit
 fi
@@ -12,14 +12,25 @@ rm -rf /opt/raspi-sensor-logger/.git
 find /opt/raspi-sensor-logger/ -type f -iname "*.sh" -exec chmod 755 {} \;
 find /opt/raspi-sensor-logger/ -type f -iname "*.py" -exec chmod 755 {} \;
 
-if [ -d "/mnt/ramdisk" ]
+#if [ -d "/mnt/ramdisk" ]
+#then
+#    echo "Directory /mnt/ramdisk exists."
+#else
+#    mkdir /mnt/ramdisk
+#    mount -osize=30m tmpfs /mnt/ramdisk -t tmpfs
+#    chmod 777 /mnt/ramdisk
+#    sqlite3 /mnt/ramdisk/mqtt_ramdisk.db "VACUUM;PRAGMA auto_vacuum = 1;"
+#fi
+
+if [ -d "/media/birdofprey/Sandisk/sensord" ]
 then
-    echo "Directory /mnt/ramdisk exists."
+    echo "Directory /media/birdofprey/Sandisk/sensord exists."
 else
-    mkdir /mnt/ramdisk
-    mount -osize=30m tmpfs /mnt/ramdisk -t tmpfs
-    chmod 777 /mnt/ramdisk
-    sqlite3 /mnt/ramdisk/mqtt_ramdisk.db "VACUUM;PRAGMA auto_vacuum = 1;"
+    echo "Creating /media/birdofprey/Sandisk/sensord exists."
+    mkdir /media/birdofprey/Sandisk/sensord
+    chown birdofprey:birdofprey /media/birdofprey/Sandisk/sensord
+    cd /media/birdofprey/Sandisk/sensord
+    sqlite3 mqtt_ramdisk.db "VACUUM;PRAGMA auto_vacuum = 1;"
 fi
 
 cp /opt/raspi-sensor-logger/services/* /etc/systemd/system
@@ -39,8 +50,10 @@ sleep 5s
 systemctl enable ds18s20.service
 systemctl start ds18s20.service
 systemctl enable persistent_logger.service
+systemctl enable --now persistent_logger.timer
 systemctl start persistent_logger.service
 systemctl enable accuweather.service
+systemctl enable --now accuweather.timer
 systemctl start accuweather.service
 systemctl enable esp_update_delete.service
 systemctl start esp_update_delete.service

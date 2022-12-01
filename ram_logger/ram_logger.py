@@ -18,7 +18,7 @@ MQTT_USER = 'YOUR MQTT USER'
 MQTT_PASSWORD = 'YOUR MQTT USER PASSWORD'
 TOPIC = 'sensors/#'
 
-DATABASE_FILE = '/mnt/ramdisk/mqtt_ramdisk.db'
+DATABASE_FILE = '/media/birdofprey/Sandisk/sensordb/mqtt_ramdisk.db'
 
 table_name_cache = {""}
 timestamp_msg = 0

@@ -21,8 +21,8 @@ ExecStart=/opt/raspi-sensor-logger/accuweather/accuweather.py
 
 SuccessExitStatus=0
 TimeoutStopSec=10
-Restart=on-failure
-RestartSec=5
+#Restart=on-failure
+#RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
